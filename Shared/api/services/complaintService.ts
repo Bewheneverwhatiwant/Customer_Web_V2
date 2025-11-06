@@ -24,7 +24,7 @@ export interface ComplaintResponse {
 export interface CreateComplaintRequest {
   title: string;
   content: string;
-  image?: File;
+  image?: File; // 프론트엔드에서는 받지만 현재 백엔드는 JSON만 지원
 }
 
 /**
@@ -47,17 +47,13 @@ export const createComplaint = async (
 ): Promise<ApiResponse<{ id: number }>> => {
   console.log('[complaintService] 민원 작성 요청:', data);
 
-  const formData = new FormData();
-  formData.append('title', data.title);
-  formData.append('content', data.content);
-  if (data.image) {
-    formData.append('image', data.image);
-  }
-
+  // 백엔드가 JSON만 지원하므로 JSON으로 전송 (이미지는 제외)
   const result = await fetcher<{ id: number }>(API_ENDPOINTS.COMPLAINT.CREATE, {
     method: 'POST',
-    body: formData,
-    headers: {},
+    body: JSON.stringify({
+      title: data.title,
+      content: data.content,
+    }),
   });
   console.log('[complaintService] 민원 작성 결과:', result);
   return result;

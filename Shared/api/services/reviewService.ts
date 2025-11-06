@@ -29,7 +29,7 @@ export const createReview = async (data: any): Promise<ApiResponse<any>> => {
   return fetcher<any>(API_ENDPOINTS.REVIEW.CREATE, {
     method: 'POST',
     body: formData,
-    headers: {},
+    // FormData는 자동으로 Content-Type 설정되므로 headers 생략
   });
 };
 

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import CustomButton from "../Shared/ui/CustomButton";
+import CustomModal from "../Shared/ui/CustomModal";
 import { useAuthStore } from "../Shared/store/authStore";
 
 // 메뉴 항목 타입 정의
@@ -16,21 +17,21 @@ type MenuItem = {
 
 // 메뉴 구성
 const menuItems: MenuItem[] = [
-  { label: "BRAND", path: "/brand" },
+  { label: "BRAND", path: "/menu/about" },
   {
     label: "TPT 서비스",
     submenu: [
-      { label: "매매일지 작성하기", path: "/service/journal" },
-      { label: "All-in-one 강의", path: "/service/lecture" },
-      { label: "10억 인사이트", path: "/service/insight" },
+      { label: "매매일지 작성하기", path: "/my/feedback-request" },
+      { label: "All-in-one 강의", path: "/menu/class-list" },
+      { label: "10억 인사이트", path: "/menu/insight" },
     ],
   },
   {
     label: "TPT 커뮤니티",
     submenu: [
-      { label: "TPT 매매일지", path: "/community/journal" },
+      { label: "TPT 매매일지", path: "/menu/feedback-list" },
       { label: "TPT 후기", path: "/menu/community/review" },
-      { label: "TPT 전문가 분석", path: "/community/analysis" },
+      { label: "TPT 전문가 분석", path: "/menu/analysis" },
     ],
   },
   { label: "ETCC 회원권", path: "/menu/etcc" },
@@ -39,7 +40,9 @@ const menuItems: MenuItem[] = [
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // zustand에서 로그인 상태 가져오기
   const { isAuthenticated, user } = useAuthStore();
@@ -55,6 +58,16 @@ export function Header() {
 
   const handleMouseLeave = () => {
     setIsMenuOpen(false);
+  };
+
+  // 메뉴 클릭 핸들러 (비로그인 상태에서 매매일지 작성하기 클릭 시 모달)
+  const handleMenuClick = (e: React.MouseEvent, path: string) => {
+    // 매매일지 작성하기 경로이고 비로그인 상태인 경우
+    if (path === "/my/feedback-request" && !isAuthenticated) {
+      e.preventDefault();
+      setIsLoginModalOpen(true);
+      setIsMenuOpen(false);
+    }
   };
 
   return (
@@ -207,6 +220,7 @@ export function Header() {
                         <li key={subItem.label}>
                           <Link
                             href={subItem.path}
+                            onClick={(e) => handleMenuClick(e, subItem.path)}
                             className="text-sm text-gray-600 hover:text-blue-700 transition-colors duration-150"
                           >
                             {subItem.label}
@@ -228,6 +242,50 @@ export function Header() {
           </div>
         </div>
       )}
+
+      {/* 로그인 필요 모달 */}
+      <CustomModal variant={1} isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)}>
+        <div className="p-6 flex flex-col items-center gap-4">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-center">로그인이 필요합니다</h3>
+          <p className="text-center text-gray-700">
+            매매일지 작성하기는 로그인 후 이용 가능합니다.
+            <br />
+            로그인 페이지로 이동하시겠습니까?
+          </p>
+          <div className="flex gap-3 mt-4 w-full">
+            <button
+              onClick={() => setIsLoginModalOpen(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
+            >
+              취소
+            </button>
+            <button
+              onClick={() => {
+                setIsLoginModalOpen(false);
+                router.push('/login');
+              }}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            >
+              로그인
+            </button>
+          </div>
+        </div>
+      </CustomModal>
     </>
   );
 }

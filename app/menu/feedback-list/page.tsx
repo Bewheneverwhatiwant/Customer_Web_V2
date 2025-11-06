@@ -32,66 +32,43 @@ export default function AllFeedback() {
     try {
       setLoading(true);
 
-      // Mock 데이터 - 실제로는 API 호출
-      const mockFeedbacks: FeedbackCard[] = [
-        {
-          feedbackRequestId: 1,
-          title: "비트코인 롱 포지션 진입 전략",
-          contentPreview: "오늘 비트코인 차트를 보니 상승 추세가 명확해 보여서...",
-          createdAt: "2025-01-10T14:30:00",
-          isBestFeedback: true,
-        },
-        {
-          feedbackRequestId: 2,
-          title: "이더리움 스윙 트레이딩",
-          contentPreview: "주간 차트 분석 결과 이더리움이 좋은 진입 구간에...",
-          createdAt: "2025-01-10T13:20:00",
-          isBestFeedback: true,
-        },
-        {
-          feedbackRequestId: 3,
-          title: "손절 타이밍 문의",
-          contentPreview: "현재 포지션에서 손절을 고려하고 있는데...",
-          createdAt: "2025-01-10T12:15:00",
-          isBestFeedback: false,
-        },
-        {
-          feedbackRequestId: 4,
-          title: "데이 트레이딩 결과 분석",
-          contentPreview: "오늘 3번의 매매를 진행했고, 2승 1패...",
-          createdAt: "2025-01-10T11:00:00",
-          isBestFeedback: false,
-        },
-        {
-          feedbackRequestId: 5,
-          title: "주간 트레이딩 리뷰 요청",
-          contentPreview: "이번 주 총 10회 매매 진행, 수익률 +5.2%...",
-          createdAt: "2025-01-10T10:30:00",
-          isBestFeedback: false,
-        },
-        {
-          feedbackRequestId: 6,
-          title: "리스크 관리 전략",
-          contentPreview: "포지션 사이즈와 리스크 관리에 대해...",
-          createdAt: "2025-01-10T09:45:00",
-          isBestFeedback: false,
-        },
-      ];
+      // API 호출 - feedbackService import 필요
+      const { getFeedbackList } = await import("../../../Shared/api/services/feedbackService");
+      const response = await getFeedbackList(page, 20);
 
-      const crowns = mockFeedbacks.filter((f) => f.isBestFeedback);
-      const others = mockFeedbacks.filter((f) => !f.isBestFeedback);
+      if (response.success && response.data) {
+        // API 응답 구조: { feedbacks: [...], sliceInfo: {...} }
+        const feedbacksArray = response.data.feedbacks || [];
+        const sliceInfo = response.data.sliceInfo || {};
 
-      if (page === 0) {
-        // 첫 페이지는 덮어쓰기
-        setCrownFeedbacks(crowns);
-        setOtherFeedbacks(others);
+        // API 데이터를 FeedbackCard 형식으로 변환
+        const transformedFeedbacks: FeedbackCard[] = feedbacksArray.map((item: any) => ({
+          feedbackRequestId: item.feedbackRequestId,
+          title: item.title || '매매일지',
+          contentPreview: item.contentPreview || '피드백 내용',
+          createdAt: item.createdAt || new Date().toISOString(),
+          isBestFeedback: item.isBestFeedback || false,
+        }));
+
+        const crowns = transformedFeedbacks.filter((f) => f.isBestFeedback);
+        const others = transformedFeedbacks.filter((f) => !f.isBestFeedback);
+
+        if (page === 0) {
+          // 첫 페이지는 덮어쓰기
+          setCrownFeedbacks(crowns);
+          setOtherFeedbacks(others);
+        } else {
+          // 다음 페이지는 추가
+          setCrownFeedbacks((prev) => [...prev, ...crowns]);
+          setOtherFeedbacks((prev) => [...prev, ...others]);
+        }
+
+        // 다음 페이지 존재 여부 확인 (sliceInfo.hasNext)
+        setHasMore(sliceInfo.hasNext || false);
       } else {
-        // 다음 페이지는 추가
-        setCrownFeedbacks((prev) => [...prev, ...crowns]);
-        setOtherFeedbacks((prev) => [...prev, ...others]);
+        setError(response.message || '피드백 목록을 불러올 수 없습니다.');
       }
 
-      setHasMore(false); // Mock 데이터이므로 더보기 없음
       setCurrentPage(page);
     } catch (err) {
       console.error("피드백 목록 조회 오류:", err);

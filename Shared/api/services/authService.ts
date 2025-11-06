@@ -184,7 +184,6 @@ export const updateProfileImage = async (file: File): Promise<ApiResponse<string
   return fetcher<string>(API_ENDPOINTS.USER.PROFILE_IMAGE, {
     method: 'POST',
     body: formData,
-    // FormData를 사용할 때는 Content-Type을 자동으로 설정하도록 헤더 제거
-    headers: {},
+    // FormData는 자동으로 Content-Type 설정되므로 headers 생략
   });
 };
