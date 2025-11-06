@@ -38,10 +38,10 @@ export default function PaidBeforeLeveltest() {
       </div>
 
       <div className="flex gap-3">
-        <CustomButton variant="prettyFull" onClick={() => router.push('/leveltest')}>
+        <CustomButton variant="prettyFull" onClick={() => router.push('/my/leveltest')}>
           레벨테스트 시작하기
         </CustomButton>
-        <CustomButton variant="normalClean" onClick={() => router.push('/leveltest/guide')}>
+        <CustomButton variant="normalClean" onClick={() => router.push('/my/leveltest/guide')}>
           자세히 보기
         </CustomButton>
       </div>

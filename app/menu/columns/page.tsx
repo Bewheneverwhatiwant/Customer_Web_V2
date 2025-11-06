@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { columnService } from '../../Shared/api/services';
+import { columnService } from '../../../Shared/api/services';
 
 interface Column {
   id: number;

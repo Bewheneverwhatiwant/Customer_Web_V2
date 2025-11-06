@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type JournalCard = {
   id: number;
@@ -46,6 +47,7 @@ const journalData: JournalCard[] = [
 
 export function TraderJournalSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
 
   const handleNext = () => {
     if (currentIndex < journalData.length - 3) {
@@ -57,6 +59,10 @@ export function TraderJournalSection() {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
     }
+  };
+
+  const handleCardClick = (id: number) => {
+    router.push(`/menu/columns/${id}`);
   };
 
   return (
@@ -89,7 +95,8 @@ export function TraderJournalSection() {
           {journalData.map((journal) => (
             <div
               key={journal.id}
-              className="min-w-[calc(33.333%-1rem)] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+              onClick={() => handleCardClick(journal.id)}
+              className="min-w-[calc(33.333%-1rem)] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer"
             >
               {/* 차트 이미지 영역 */}
               <div className="bg-gradient-to-br from-blue-100 to-blue-200 h-48 flex items-center justify-center">

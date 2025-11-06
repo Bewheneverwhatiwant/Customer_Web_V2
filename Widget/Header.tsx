@@ -29,12 +29,12 @@ const menuItems: MenuItem[] = [
     label: "TPT 커뮤니티",
     submenu: [
       { label: "TPT 매매일지", path: "/community/journal" },
-      { label: "TPT 후기", path: "/community/review" },
+      { label: "TPT 후기", path: "/menu/community/review" },
       { label: "TPT 전문가 분석", path: "/community/analysis" },
     ],
   },
-  { label: "ETCC 회원권", path: "/etcc" },
-  { label: "고객센터", path: "/support" },
+  { label: "ETCC 회원권", path: "/menu/etcc" },
+  { label: "고객센터", path: "/my/support" },
 ];
 
 export function Header() {

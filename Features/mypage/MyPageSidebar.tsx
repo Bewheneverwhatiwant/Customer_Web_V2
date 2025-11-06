@@ -117,7 +117,7 @@ export default function MyPageSidebar({ userData }: Props) {
           onPasswordChange={() => setOpenModal('password')}
           onUidClick={() => setOpenModal('uid')}
           onTypeChange={() => setOpenModal('type')}
-          onCustomerServiceClick={() => router.push('/support')}
+          onCustomerServiceClick={() => router.push('/my/support')}
         />
       </div>
 

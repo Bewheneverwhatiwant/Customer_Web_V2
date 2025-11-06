@@ -26,7 +26,7 @@ export function Footer() {
         {/* 중앙 - 주요 링크 */}
         <nav className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm">
           <Link
-            href="/about"
+            href="/menu/about"
             className="text-gray-300 hover:text-white transition-colors"
           >
             회사소개
@@ -44,7 +44,7 @@ export function Footer() {
             개인정보처리방침
           </Link>
           <Link
-            href="/support"
+            href="/my/support"
             className="text-gray-300 hover:text-white transition-colors"
           >
             고객센터

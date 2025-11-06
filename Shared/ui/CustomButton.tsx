@@ -16,6 +16,7 @@ type ButtonVariant =
   | "onlyText"
   | "simpleBlack";
 
+  
 interface ButtonProps {
   width?: string;
   height?: string;

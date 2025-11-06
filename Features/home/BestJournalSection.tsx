@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type BestJournal = {
   id: number;
@@ -40,6 +41,7 @@ const bestJournals: BestJournal[] = [
 
 export function BestJournalSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
 
   const handleNext = () => {
     if (currentIndex < bestJournals.length - 3) {
@@ -51,6 +53,10 @@ export function BestJournalSection() {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
     }
+  };
+
+  const handleCardClick = (id: number) => {
+    router.push(`/menu/columns/${id}`);
   };
 
   return (
@@ -88,7 +94,8 @@ export function BestJournalSection() {
           {bestJournals.map((journal) => (
             <div
               key={journal.id}
-              className="min-w-[calc(33.333%-1rem)] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border-2 border-yellow-200"
+              onClick={() => handleCardClick(journal.id)}
+              className="min-w-[calc(33.333%-1rem)] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border-2 border-yellow-200 cursor-pointer"
             >
               {/* 차트 이미지 영역 */}
               <div className="bg-gradient-to-br from-yellow-100 to-yellow-200 h-48 flex items-center justify-center relative">

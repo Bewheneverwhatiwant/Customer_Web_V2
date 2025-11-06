@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Coins } from 'lucide-react';
+import { Coins, User } from 'lucide-react';
 
 interface ProfileSectionProps {
   name: string;
@@ -30,13 +30,17 @@ export default function ProfileSection({
     <div className="flex flex-col items-center gap-2">
       {/* 프로필 이미지 업로더 */}
       <div className="relative">
-        <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#B9AB70]">
-          <Image
-            src={profileImage || '/images/default_profile.png'}
-            alt={name}
-            fill
-            className="object-cover"
-          />
+        <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#B9AB70] bg-gray-200 flex items-center justify-center">
+          {profileImage ? (
+            <Image
+              src={profileImage}
+              alt={name}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <User size={48} className="text-gray-400" />
+          )}
         </div>
         <label
           htmlFor="profile-upload"

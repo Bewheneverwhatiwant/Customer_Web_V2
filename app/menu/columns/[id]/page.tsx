@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { ThumbsUp, MessageCircle } from 'lucide-react';
-import { columnService } from '../../../Shared/api/services';
-import CustomButton from '../../../Shared/ui/CustomButton';
-import CustomModal from '../../../Shared/ui/CustomModal';
+import { columnService } from '../../../../Shared/api/services';
+import CustomButton from '../../../../Shared/ui/CustomButton';
+import CustomModal from '../../../../Shared/ui/CustomModal';
 
 interface Comment {
   id: number;

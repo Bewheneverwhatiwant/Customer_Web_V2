@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Send, Edit3, Trash2, ImagePlus } from 'lucide-react';
-import CustomButton from '../../Shared/ui/CustomButton';
-import CustomModal from '../../Shared/ui/CustomModal';
+import CustomButton from '../../../Shared/ui/CustomButton';
+import CustomModal from '../../../Shared/ui/CustomModal';
 import {
   createComplaint,
   getComplaintList,
   type ComplaintResponse,
-} from '../../Shared/api/services/complaintService';
+} from '../../../Shared/api/services/complaintService';
 
 type Complaint = {
   id: number;

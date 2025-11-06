@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Insight = {
   id: number;
@@ -29,6 +30,7 @@ const insights: Insight[] = [
 
 export function InsightSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
 
   const handleNext = () => {
     if (currentIndex < insights.length - 4) {
@@ -40,6 +42,10 @@ export function InsightSection() {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
     }
+  };
+
+  const handleCardClick = (id: number) => {
+    router.push(`/menu/columns/${id}`);
   };
 
   return (
@@ -68,6 +74,7 @@ export function InsightSection() {
         {insights.map((insight) => (
           <div
             key={insight.id}
+            onClick={() => handleCardClick(insight.id)}
             className="bg-white rounded-lg shadow-sm hover:shadow-md hover:scale-105 transition-all overflow-hidden cursor-pointer"
           >
             {/* 이미지 영역 */}

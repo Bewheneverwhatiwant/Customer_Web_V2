@@ -18,7 +18,7 @@ export default function FeedbackListItem({ time, title, isNew, feedbackId }: Fee
   return (
     <div
       className="flex items-center justify-between p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50"
-      onClick={() => router.push(`/feedback-detail?id=${feedbackId}`)}
+      onClick={() => router.push(`/my/feedback-detail?id=${feedbackId}`)}
     >
       <div className="flex items-center gap-3">
         <span className="text-sm text-gray-500">{time}</span>

@@ -12,22 +12,22 @@ const guides: GuideCard[] = [
   {
     title: "TPT 가이드라인",
     subtitle: "TPT 120% 활용 방법",
-    href: "/guide/tpt",
+    href: "/menu/guide/tpt",
   },
   {
     title: "TPT 후기",
     subtitle: "올바른 트레이딩, 장기적 성장",
-    href: "/community/review",
+    href: "/menu/community/review",
   },
   {
     title: "토큰 제도 가이드라인",
     subtitle: "무료 피드백 요청 방법",
-    href: "/guide/token",
+    href: "/menu/guide/token",
   },
   {
     title: "ETCC 회원권 알아보기",
     subtitle: "트레이딩에 진심이라면?",
-    href: "/etcc",
+    href: "/menu/etcc",
   },
 ];
 
