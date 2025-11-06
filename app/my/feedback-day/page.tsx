@@ -2,17 +2,16 @@
 
 export const dynamic = 'force-dynamic';
 
-
-
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { feedbackService } from '../../../Shared/api/services';
-import FeedbackListItem from '../../../Features/feedback-view/FeedbackListItem';
+import { fetcher } from '../../../Shared/api/apiInstance';
+import { API_ENDPOINTS } from '../../../Shared/api/endpoints';
+import DayFeedback from '../../../Features/feedback-history/DayFeedback';
 
 interface DayData {
   time: string;
   title: string;
-  isNew: boolean;
+  new: boolean;
   feedbackId: number;
 }
 
@@ -23,6 +22,7 @@ export default function FeedbackDayPage() {
   const searchParams = useSearchParams();
   const year = searchParams.get('year') || '2025';
   const month = searchParams.get('month') || '1';
+  const week = searchParams.get('week') || '첫째 주';
   const day = searchParams.get('day') || '1';
 
   const [entries, setEntries] = useState<DayData[]>([]);
@@ -33,41 +33,52 @@ export default function FeedbackDayPage() {
     const loadFeedbackList = async () => {
       try {
         setLoading(true);
-        const response = await feedbackService.getFeedbackByDate(
-          Number(year),
-          Number(month),
-          Number(day)
+        const response = await fetcher<any[]>(
+          API_ENDPOINTS.FEEDBACK_REQUEST.BY_DATE(
+            Number(year),
+            Number(month),
+            Number(day)
+          ),
+          { method: 'GET' }
         );
 
         if (response.success && response.data) {
+          // API 응답을 DayData 형식으로 변환
           const feedbackList = response.data;
           const transformedEntries: DayData[] = feedbackList.map((item: any, index: number) => {
+            // createdAt을 시간으로 변환
             const createdDate = new Date(item.createdAt);
             const hours = createdDate.getHours();
             const minutes = createdDate.getMinutes();
+            const seconds = createdDate.getSeconds();
             const period = hours >= 12 ? 'pm' : 'am';
             const displayHours = hours % 12 || 12;
-            const time = `${period} ${displayHours}:${String(minutes).padStart(2, '0')}`;
+            const time = `${period} ${displayHours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
+            // 피드백 상태가 "FN"(답변 안 읽음)인 경우 new로 표시
             const isNew = item.status === 'FN';
+
+            // 제목 생성: investmentType 포함
             const investmentTypeLabel =
               item.investmentType === 'DAY'
                 ? '데이'
                 : item.investmentType === 'SWING'
                   ? '스윙'
-                  : '스켈핑';
+                  : item.investmentType === 'SCALPING'
+                    ? '스켈핑'
+                    : '';
 
             return {
               time,
               title: `${month}/${day} (${investmentTypeLabel} ${index + 1}) 작성 완료`,
-              isNew: isNew,
+              new: isNew,
               feedbackId: item.id,
             };
           });
 
           setEntries(transformedEntries);
         } else {
-          setError(response.error || '피드백 목록을 불러오는데 실패했습니다.');
+          setError(response.message || '피드백 목록을 불러오는데 실패했습니다.');
         }
       } catch (err) {
         console.error('피드백 목록 조회 오류:', err);
@@ -97,19 +108,12 @@ export default function FeedbackDayPage() {
   }
 
   return (
-    <div className="p-6 mt-20 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">
-        {year}년 {month}월 {day}일 피드백
-      </h1>
-      <div className="bg-white rounded-lg shadow">
-        {entries.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">피드백이 없습니다.</div>
-        ) : (
-          entries.map((entry, index) => (
-            <FeedbackListItem key={index} {...entry} />
-          ))
-        )}
-      </div>
-    </div>
+    <DayFeedback
+      year={year}
+      month={month}
+      week={week}
+      day={day}
+      entries={entries}
+    />
   );
 }

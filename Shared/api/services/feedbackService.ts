@@ -13,7 +13,7 @@ export const createSwingFeedback = async (data: FormData): Promise<ApiResponse<a
   return fetcher<any>(API_ENDPOINTS.FEEDBACK_REQUEST.CREATE_SWING, {
     method: 'POST',
     body: data,
-    headers: {}, // FormData는 자동으로 Content-Type 설정
+    // FormData는 자동으로 Content-Type 설정되므로 headers 생략
   });
 };
 
@@ -24,7 +24,6 @@ export const createDayFeedback = async (data: FormData): Promise<ApiResponse<any
   return fetcher<any>(API_ENDPOINTS.FEEDBACK_REQUEST.CREATE_DAY, {
     method: 'POST',
     body: data,
-    headers: {},
   });
 };
 
@@ -35,7 +34,6 @@ export const createScalpingFeedback = async (data: FormData): Promise<ApiRespons
   return fetcher<any>(API_ENDPOINTS.FEEDBACK_REQUEST.CREATE_SCALPING, {
     method: 'POST',
     body: data,
-    headers: {},
   });
 };
 

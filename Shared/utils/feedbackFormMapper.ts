@@ -12,6 +12,7 @@ export const mapSwingFormData = (formData: any): FormData => {
 
   fd.append('courseStatus', formData.courseStatus || 'AFTER_COMPLETION');
   fd.append('membershipLevel', formData.membershipLevel || 'PREMIUM');
+  fd.append('useToken', formData.useToken ? 'true' : 'false');
 
   fd.append('feedbackYear', String(formData.feedbackYear || new Date().getFullYear()));
   fd.append('feedbackMonth', String(formData.feedbackMonth || new Date().getMonth() + 1));
@@ -25,10 +26,10 @@ export const mapSwingFormData = (formData: any): FormData => {
   fd.append('positionHoldingTime', formData.positionHoldingTime || '');
   if (formData.screenshot) fd.append('screenshotFiles', formData.screenshot);
   fd.append('position', formData.position || 'LONG');
-  fd.append('riskTaking', String(formData.risk || 0));
+  fd.append('riskTaking', String(formData.riskTaking || formData.risk || 0));
   fd.append('leverage', String(formData.leverage || 0));
   fd.append('pnl', String(formData.pl !== undefined && formData.pl !== null ? formData.pl : 0));
-  fd.append('rnr', String(formData.rnr || 0));
+  fd.append('rnr', String(formData.rr || formData.rnr || 0));
   fd.append('tradingReview', formData.tradingReview || '');
   fd.append('operatingFundsRatio', String(formData.operatingFundsRatio || 0));
   fd.append('entryPrice', String(formData.entryPrice || 0));
@@ -64,15 +65,16 @@ export const mapDayFormData = (formData: any): FormData => {
 
   fd.append('courseStatus', formData.courseStatus || 'AFTER_COMPLETION');
   fd.append('membershipLevel', formData.membershipLevel || 'PREMIUM');
+  fd.append('useToken', formData.useToken ? 'true' : 'false');
   fd.append('requestDate', new Date().toISOString().split('T')[0]);
   fd.append('category', formData.category || 'string');
   fd.append('positionHoldingTime', formData.positionHoldingTime || 'string');
   if (formData.screenshot) fd.append('screenshotFiles', formData.screenshot);
-  fd.append('riskTaking', String(formData.risk || 0));
+  fd.append('riskTaking', String(formData.riskTaking || formData.risk || 0));
   fd.append('leverage', String(formData.leverage || 0));
   fd.append('position', formData.position || 'LONG');
   fd.append('pnl', String(formData.pl !== undefined && formData.pl !== null ? formData.pl : 0));
-  fd.append('rnr', String(formData.rnr || 0));
+  fd.append('rnr', String(formData.rr || formData.rnr || 0));
   fd.append('tradingReview', formData.tradingReview || 'string');
   fd.append('operatingFundsRatio', String(formData.operatingFundsRatio || 0));
 
@@ -107,13 +109,14 @@ export const mapScalpingFormData = (formData: any): FormData => {
   // 필수 필드
   fd.append('courseStatus', formData.courseStatus || 'AFTER_COMPLETION');
   fd.append('membershipLevel', formData.membershipLevel || 'PREMIUM');
+  fd.append('useToken', formData.useToken ? 'true' : 'false');
   fd.append('feedbackRequestDate', formData.requestDate || new Date().toISOString().split('T')[0]);
   fd.append('category', formData.category || 'string');
-  fd.append('riskTaking', String(formData.risk || 0));
+  fd.append('riskTaking', String(formData.riskTaking || formData.risk || 0));
   fd.append('leverage', String(formData.leverage || 0));
   fd.append('position', formData.position || 'LONG');
   fd.append('pnl', String(formData.pl !== undefined && formData.pl !== null ? formData.pl : 0));
-  fd.append('rnr', String(formData.rnr || 0));
+  fd.append('rnr', String(formData.rr || formData.rnr || 0));
 
   // 항상 필수 필드 (스켈핑 API 스펙)
   fd.append('operatingFundsRatio', String(formData.operatingFundsRatio || 0));
@@ -142,6 +145,7 @@ export const mapFreeFormData = (formData: any): FormData => {
 
   fd.append('courseStatus', formData.courseStatus || 'BEFORE_COMPLETION');
   fd.append('membershipLevel', formData.membershipLevel || 'BASIC');
+  fd.append('useToken', formData.useToken ? 'true' : 'false');
 
   fd.append(
     'feedbackRequestDate',
@@ -156,10 +160,10 @@ export const mapFreeFormData = (formData: any): FormData => {
   if (formData.screenshot) fd.append('screenshotFiles', formData.screenshot);
 
   fd.append('position', formData.position || 'LONG');
-  fd.append('riskTaking', String(formData.risk || 0));
+  fd.append('riskTaking', String(formData.riskTaking || formData.risk || 0));
   fd.append('leverage', String(formData.leverage || 0));
   fd.append('pnl', String(formData.pl !== undefined && formData.pl !== null ? formData.pl : 0));
-  fd.append('rnr', String(formData.rnr || 0));
+  fd.append('rnr', String(formData.rr || formData.rnr || 0));
 
   fd.append('operatingFundsRatio', String(formData.operatingFundsRatio || 0));
   fd.append('entryPrice', String(formData.entryPrice || 0));

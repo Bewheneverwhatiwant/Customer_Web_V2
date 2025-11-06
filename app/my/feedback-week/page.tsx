@@ -2,11 +2,11 @@
 
 export const dynamic = 'force-dynamic';
 
-
-
 import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { tradingService } from '../../../Shared/api/services';
+import { useSearchParams } from 'next/navigation';
+import { fetcher } from '../../../Shared/api/apiInstance';
+import { API_ENDPOINTS } from '../../../Shared/api/endpoints';
+import WeekFeedback from '../../../Features/feedback-history/WeekFeedback';
 
 interface DayData {
   day: string;
@@ -18,20 +18,56 @@ interface DayData {
   new: boolean;
 }
 
+interface WeekSummary {
+  winRate: string;
+  profitLossRatio: string;
+  weeklyPnL: string;
+}
+
+interface WeekComparison {
+  before: {
+    winRate: string;
+    profitLossRatio: string;
+    weeklyPnL: string;
+  };
+  current: {
+    winRate: string;
+    profitLossRatio: string;
+    weeklyPnL: string;
+  };
+}
+
 /**
  * 주별 피드백 통계 페이지
  */
 export default function FeedbackWeekPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const year = searchParams.get('year') || '2025';
   const month = searchParams.get('month') || '1';
   const week = searchParams.get('week') || '첫째 주';
 
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState<DayData[]>([]);
-  const [summary, setSummary] = useState({ winRate: '-', profitLossRatio: '-', weeklyPnL: '-' });
+  const [summary, setSummary] = useState<WeekSummary>({
+    winRate: '-',
+    profitLossRatio: '-',
+    weeklyPnL: '-',
+  });
+  const [comparison, setComparison] = useState<WeekComparison>({
+    before: {
+      winRate: '-',
+      profitLossRatio: '-',
+      weeklyPnL: '-',
+    },
+    current: {
+      winRate: '-',
+      profitLossRatio: '-',
+      weeklyPnL: '-',
+    },
+  });
+  const [memo, setMemo] = useState('');
 
+  // 주차 문자열을 숫자로 변환
   const getWeekNumber = (weekStr: string): number => {
     const weekMap: { [key: string]: number } = {
       '첫째 주': 1,
@@ -48,14 +84,15 @@ export default function FeedbackWeekPage() {
       setLoading(true);
       try {
         const weekNumber = getWeekNumber(week);
-        const response = await tradingService.getWeeklySummary(
-          parseInt(year),
-          parseInt(month),
-          weekNumber
+        const response = await fetcher<any>(
+          API_ENDPOINTS.WEEKLY_TRADING.GET(parseInt(year), parseInt(month), weekNumber),
+          { method: 'GET' }
         );
 
         if (response.success && response.data) {
           const data = response.data;
+
+          // 일별 데이터 변환
           const dayNames = ['월', '화', '수', '목', '금', '토', '일'];
           const daysData: DayData[] =
             data.weeklyFeedbackSummaryResponseDTO.weeklyWeekFeedbackSummaryResponseDTOS.map(
@@ -72,17 +109,43 @@ export default function FeedbackWeekPage() {
                   wins: dayData.winCount || '-',
                   losses: dayData.lossCount || '-',
                   dailyPnL: dayData.dailyPnl || '-',
-                  new: dayData.status === 'FN',
+                  new: dayData.status === 'FN', // FN: 피드백 답변 안 읽음
                 };
               }
             );
           setDays(daysData);
 
+          // 주간 요약 데이터
           setSummary({
             winRate: `${data.weeklyFeedbackSummaryResponseDTO.winningRate.toFixed(1)}%`,
-            profitLossRatio: `${data.weeklyFeedbackSummaryResponseDTO.weeklyAverageRnr.toFixed(2)}`,
+            profitLossRatio: `${data.weeklyFeedbackSummaryResponseDTO.weeklyAverageRnr.toFixed(
+              2
+            )}`,
             weeklyPnL: `${data.weeklyFeedbackSummaryResponseDTO.weeklyPnl.toFixed(2)}`,
           });
+
+          // 성과 비교 데이터 (지난 주 vs 이번 주)
+          if (data.performanceComparison) {
+            setComparison({
+              before: {
+                winRate: `${data.performanceComparison.before.winRate.toFixed(1)}%`,
+                profitLossRatio: `${data.performanceComparison.before.rnr.toFixed(2)}`,
+                weeklyPnL: `${data.performanceComparison.before.pnl.toFixed(2)}`,
+              },
+              current: {
+                winRate: `${data.performanceComparison.current.winRate.toFixed(1)}%`,
+                profitLossRatio: `${data.performanceComparison.current.rnr.toFixed(2)}`,
+                weeklyPnL: `${data.performanceComparison.current.pnl.toFixed(2)}`,
+              },
+            });
+          }
+
+          // 메모 데이터 (있는 경우)
+          if (data.memo) {
+            setMemo(data.memo);
+          }
+        } else {
+          console.error('주간 통계 조회 실패:', response.error);
         }
       } catch (error) {
         console.error('주간 통계 조회 에러:', error);
@@ -103,66 +166,14 @@ export default function FeedbackWeekPage() {
   }
 
   return (
-    <div className="p-6 mt-20 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">
-        {year}년 {month}월 {week} 통계
-      </h1>
-
-      {/* 주간 요약 */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">주간 요약</h2>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <p className="text-gray-500 text-sm">승률</p>
-            <p className="text-2xl font-bold">{summary.winRate}</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">평균 손익비</p>
-            <p className="text-2xl font-bold">{summary.profitLossRatio}</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">주간 손익</p>
-            <p className="text-2xl font-bold">{summary.weeklyPnL}%</p>
-          </div>
-        </div>
-      </div>
-
-      {/* 일별 목록 */}
-      <div className="bg-white rounded-lg shadow">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left">요일</th>
-              <th className="px-6 py-3 text-left">거래 수</th>
-              <th className="px-6 py-3 text-left">승</th>
-              <th className="px-6 py-3 text-left">패</th>
-              <th className="px-6 py-3 text-left">일일 손익</th>
-            </tr>
-          </thead>
-          <tbody>
-            {days.map((day, index) => (
-              <tr
-                key={index}
-                className="border-t cursor-pointer hover:bg-gray-50"
-                onClick={() =>
-                  router.push(
-                    `/my/feedback-day?year=${year}&month=${month}&week=${week}&day=${day.dayNumber}`
-                  )
-                }
-              >
-                <td className="px-6 py-4">
-                  {day.day} ({day.dayNumber}일)
-                  {day.new && <span className="ml-2 text-xs bg-red-500 text-white px-2 py-1 rounded">NEW</span>}
-                </td>
-                <td className="px-6 py-4">{day.trades}</td>
-                <td className="px-6 py-4 text-green-600">{day.wins}</td>
-                <td className="px-6 py-4 text-red-600">{day.losses}</td>
-                <td className="px-6 py-4">{day.dailyPnL}%</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <WeekFeedback
+      year={year}
+      month={month}
+      week={week}
+      days={days}
+      summary={summary}
+      comparison={comparison}
+      initialMemo={memo}
+    />
   );
 }

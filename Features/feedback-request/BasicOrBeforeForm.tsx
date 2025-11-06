@@ -1,7 +1,6 @@
 'use client';
 
 import { useFormState } from './hooks/useFormState';
-import FormHeader from './FormHeader';
 import { User } from '../../Shared/store/authStore';
 
 type Props = {
@@ -18,7 +17,6 @@ export default function BasicOrBeforeForm({ onSubmit, currentUser, riskTaking = 
     form,
     handleChange,
     handleFileChange,
-    handleWeekChange,
     screenshotPreview,
     position,
     setPosition,
@@ -46,15 +44,44 @@ export default function BasicOrBeforeForm({ onSubmit, currentUser, riskTaking = 
   const userLevel = currentUser.isPremium ? 'PREMIUM' : 'BASIC';
   const completion = currentUser.isCourseCompleted ? 'AFTER_COMPLETION' : 'BEFORE_COMPLETION';
 
+  // 투자유형 라벨
+  const investmentTypeMap: Record<string, string> = {
+    SWING: '스윙',
+    DAY: '데이',
+    SCALPING: '스켈핑',
+  };
+  const investmentTypeLabel = investmentTypeMap[currentUser.investmentType || 'SCALPING'] || '스켈핑';
+
+  // 완강 여부 라벨
+  const completionLabel = completion === 'AFTER_COMPLETION' ? '완강 후' : '완강 전';
+
+  // 유료/무료 라벨
+  const membershipLabel = userLevel === 'PREMIUM' ? 'Pro' : '무료';
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-left">
       {/* 상단 헤더 */}
-      <FormHeader
-        investmentType={currentUser.investmentType}
-        userLevel={userLevel}
-        completion={completion}
-        onWeekChange={handleWeekChange}
-      />
+      <div className="flex items-center gap-3 mb-6">
+        <span
+          className={`px-3 py-1 text-white rounded ${
+            currentUser.investmentType === 'SWING'
+              ? 'bg-orange-400'
+              : currentUser.investmentType === 'DAY'
+                ? 'bg-[#2AC287]'
+                : 'bg-sky-400'
+          }`}
+        >
+          {investmentTypeLabel}
+        </span>
+        <span className="px-3 py-1 border rounded">{completionLabel}</span>
+        <span
+          className={`px-3 py-1 text-white rounded ${
+            userLevel === 'PREMIUM' ? 'bg-gradient-to-r from-[#D2C693] to-[#928346]' : 'bg-gray-500'
+          }`}
+        >
+          {membershipLabel}
+        </span>
+      </div>
 
       {/* 안내 문구 */}
       <div className="text-sm text-gray-600 -mt-3">담당 트레이너에게 피드백을 요청합니다.</div>
@@ -280,6 +307,49 @@ export default function BasicOrBeforeForm({ onSubmit, currentUser, riskTaking = 
         <div className="flex items-center gap-3">
           <span className="font-semibold">R&R:</span>
           <span>{rr}</span>
+        </div>
+
+        {/* 손익 결과 게이지바 */}
+        <div className="relative w-full h-20 mt-4">
+          <div className="absolute top-1/2 w-full border-t border-gray-300" />
+          <div className="flex justify-between text-xs text-gray-500 mt-6">
+            {Array.from({ length: 7 }, (_, i) => (
+              <span key={i}>{-3 + i}</span>
+            ))}
+          </div>
+          <div
+            className={`absolute top-2 ${
+              (() => {
+                const gaugeMin = -3;
+                const gaugeMax = 3;
+                const actualPl = isPositive ? pl : -pl;
+                const normalized = Math.min(
+                  Math.max(actualPl / Number(form.riskTaking || riskTaking), gaugeMin),
+                  gaugeMax
+                );
+                if (normalized <= -2) return 'text-red-500';
+                if (normalized >= 2) return 'text-green-600';
+                return 'text-gray-500';
+              })()
+            }`}
+            style={{
+              left: `${(() => {
+                const gaugeMin = -3;
+                const gaugeMax = 3;
+                const actualPl = isPositive ? pl : -pl;
+                const normalized = Math.min(
+                  Math.max(actualPl / Number(form.riskTaking || riskTaking), gaugeMin),
+                  gaugeMax
+                );
+                return ((normalized - gaugeMin) / (gaugeMax - gaugeMin)) * 100;
+              })()}%`,
+              transform: 'translateX(-50%)',
+            }}
+          >
+            ▼
+          </div>
+          <span className="absolute left-0 top-0 text-red-500 font-semibold">Fail</span>
+          <span className="absolute right-0 top-0 text-green-600 font-semibold">Success</span>
         </div>
       </div>
 

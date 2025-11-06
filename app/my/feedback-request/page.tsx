@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '../../../Shared/store/authStore';
 import { useAuth } from '../../../Shared/hooks/useAuth';
 import { mapSwingFormData, mapDayFormData, mapScalpingFormData, mapFreeFormData } from '../../../Shared/utils/feedbackFormMapper';
 import BasicOrBeforeForm from '../../../Features/feedback-request/BasicOrBeforeForm';
 import SwingAfterForm from '../../../Features/feedback-request/SwingAfterForm';
 import DayAfterForm from '../../../Features/feedback-request/DayAfterForm';
-import ScalpingAfterForm from '../../../Features/feedback-request/ScalpingAfterForm';
 import SaveSuccess from '../../../Features/feedback-request/SaveSuccess';
 
 /**
@@ -17,9 +16,13 @@ import SaveSuccess from '../../../Features/feedback-request/SaveSuccess';
  */
 export default function RequestFeedbackPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuthStore();
   const { requestSwingFeedback, requestDayFeedback, requestScalpingFeedback } = useAuth();
   const [open, setOpen] = useState(false);
+
+  // URL 쿼리 파라미터에서 useToken 값 확인 (토큰 사용 여부)
+  const useToken = searchParams.get('useToken') === 'true';
 
   if (!user) {
     return <div className="text-center mt-20">로그인이 필요합니다.</div>;
@@ -31,6 +34,13 @@ export default function RequestFeedbackPage() {
 
   const handleSubmit = async (formData: any) => {
     console.log('서버로 전송할 데이터:', formData);
+    console.log('토큰 사용 여부:', useToken);
+
+    // useToken 값을 formData에 추가
+    const enrichedFormData = {
+      ...formData,
+      useToken,
+    };
 
     try {
       let fd: FormData;
@@ -38,28 +48,24 @@ export default function RequestFeedbackPage() {
 
       if (investmentType === 'SWING') {
         if (userLevel === 'BASIC' || completion === 'BEFORE_COMPLETION') {
-          fd = mapFreeFormData(formData);
+          fd = mapFreeFormData(enrichedFormData);
           res = await requestSwingFeedback(fd);
         } else {
-          fd = mapSwingFormData(formData);
+          fd = mapSwingFormData(enrichedFormData);
           res = await requestSwingFeedback(fd);
         }
       } else if (investmentType === 'DAY') {
         if (userLevel === 'BASIC' || completion === 'BEFORE_COMPLETION') {
-          fd = mapFreeFormData(formData);
+          fd = mapFreeFormData(enrichedFormData);
           res = await requestDayFeedback(fd);
         } else {
-          fd = mapDayFormData(formData);
+          fd = mapDayFormData(enrichedFormData);
           res = await requestDayFeedback(fd);
         }
       } else if (investmentType === 'SCALPING') {
-        if (userLevel === 'BASIC' || completion === 'BEFORE_COMPLETION') {
-          fd = mapFreeFormData(formData);
-          res = await requestScalpingFeedback(fd);
-        } else {
-          fd = mapScalpingFormData(formData);
-          res = await requestScalpingFeedback(fd);
-        }
+        // 스켈핑은 항상 BasicOrBeforeForm을 사용하므로 mapFreeFormData 사용
+        fd = mapFreeFormData(enrichedFormData);
+        res = await requestScalpingFeedback(fd);
       }
 
       console.log('서버 응답:', res);
@@ -78,16 +84,23 @@ export default function RequestFeedbackPage() {
   };
 
   const renderForm = () => {
-    if (userLevel === 'BASIC' || completion === 'BEFORE_COMPLETION') {
+    // 무료 고객, 완강 전 고객, 완강 후 스켈핑 고객 → BasicOrBeforeForm
+    if (
+      userLevel === 'BASIC' ||
+      completion === 'BEFORE_COMPLETION' ||
+      (completion === 'AFTER_COMPLETION' && investmentType === 'SCALPING')
+    ) {
       return <BasicOrBeforeForm onSubmit={handleSubmit} currentUser={user} />;
     }
+
+    // 완강 후 스윙/데이 고객
     if (completion === 'AFTER_COMPLETION') {
       if (investmentType === 'SWING')
         return <SwingAfterForm currentUser={user} onSubmit={handleSubmit} />;
-      if (investmentType === 'DAY') return <DayAfterForm currentUser={user} onSubmit={handleSubmit} />;
-      if (investmentType === 'SCALPING')
-        return <ScalpingAfterForm currentUser={user} onSubmit={handleSubmit} />;
+      if (investmentType === 'DAY')
+        return <DayAfterForm currentUser={user} onSubmit={handleSubmit} />;
     }
+
     return <div>조건에 맞는 Form이 없습니다.</div>;
   };
 

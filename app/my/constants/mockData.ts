@@ -138,8 +138,8 @@ export interface MockDataConfig {
  * 개발 환경에서 원하는 상태로 변경하여 사용
  */
 export const DEFAULT_MOCK_CONFIG: MockDataConfig = {
-  enabled: false, // true로 변경하면 mock data 사용
-  userStatus: 'UID_REVIEW_PENDING', // 테스트할 사용자 상태
+  enabled: true, // true로 변경하면 mock data 사용
+  userStatus: 'UID_APPROVED', // 테스트할 사용자 상태
 };
 
 /**

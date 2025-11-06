@@ -3,6 +3,8 @@
 import { UserStatus } from '../../Shared/store/authStore';
 import { RENDER_RULES } from '../../app/my/constants/userStatusRules';
 import StatusWrapper from './StatusWrapper';
+import PnLCalendar from './PnLCalendar';
+import YearlyMonthList from './YearlyMonthList';
 
 // Import widgets
 import UIDPending from '../../app/my/widget/UID_Pending';
@@ -28,6 +30,13 @@ export default function MyPageMain({ state }: Props) {
   // false일 때 blur, true 일 때 visible
   const { basic_available, premium_available, message } = RENDER_RULES[state];
 
+  // 캘린더를 보여줄 상태들
+  const shouldShowCalendar =
+    state === 'UID_APPROVED' ||
+    state === 'PAID_BEFORE_TEST' ||
+    state === 'PAID_AFTER_TEST_TRAINER_ASSIGNING' ||
+    state === 'TRAINER_ASSIGNED';
+
   const renderMainContent = () => {
     switch (state) {
       case 'UID_REVIEW_PENDING':
@@ -52,6 +61,20 @@ export default function MyPageMain({ state }: Props) {
       <div className="max-w-2xl mx-auto text-center gap-5">
         {renderMainContent()}
 
+        {/* 캘린더 컴포넌트 - UID_APPROVED, PAID_BEFORE_TEST, PAID_AFTER_TEST_TRAINER_ASSIGNING, TRAINER_ASSIGNED 상태에서만 표시 */}
+        {shouldShowCalendar && (
+          <div className="mt-10">
+            <PnLCalendar />
+          </div>
+        )}
+
+        {/* 연도별 월 목록 - 캘린더를 보여주는 상태에서만 표시 */}
+        {shouldShowCalendar && (
+          <div className="mt-10">
+            <YearlyMonthList />
+          </div>
+        )}
+
         {/* UID 승인 이후에만 보임 */}
         <StatusWrapper
           type="basic"
@@ -59,7 +82,7 @@ export default function MyPageMain({ state }: Props) {
           premium_available={premium_available}
           message={message}
         >
-          {/* 추가 기본 기능 컨텐츠 (예: 캘린더, 안내문구 등) */}
+          {/* 추가 기본 기능 컨텐츠 (예: 안내문구 등) */}
           <div className="mt-10">
             <div className="bg-gray-50 rounded-md p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">TPT 서비스 안내</h3>

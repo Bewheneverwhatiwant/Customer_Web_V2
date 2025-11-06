@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useAuthStore, User } from '../store/authStore';
 import { authService, feedbackService, complaintService } from '../api/services';
+import { clearCsrfToken } from '../utils/csrfToken';
 import type {
   ApiResponse,
   LoginRequest,
@@ -29,6 +30,7 @@ export const useAuth = () => {
         if (result.success) {
           console.log('[useAuth] 로그인 성공, 사용자 정보 조회 시작');
           // 로그인 성공 후 /my API를 호출하여 사용자 정보 가져오기
+          // CSRF 토큰은 응답 헤더에서 자동으로 추출되어 localStorage에 저장됨
           const myInfoResult = await authService.getMyInfo();
           if (myInfoResult.success && myInfoResult.data) {
             console.log('[useAuth] 사용자 정보 조회 성공:', myInfoResult.data);
@@ -71,6 +73,8 @@ export const useAuth = () => {
     try {
       const result = await authService.logout();
       storeLogout();
+      // 로그아웃 시 CSRF 토큰 제거
+      clearCsrfToken();
       return result;
     } catch (error) {
       console.error('로그아웃 오류:', error);
@@ -88,6 +92,8 @@ export const useAuth = () => {
     try {
       const result = await authService.deleteUser();
       storeLogout();
+      // 회원탈퇴 시 CSRF 토큰 제거
+      clearCsrfToken();
       return result;
     } catch (error) {
       console.error('회원탈퇴 오류:', error);

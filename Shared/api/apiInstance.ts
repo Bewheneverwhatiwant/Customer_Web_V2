@@ -17,7 +17,10 @@ export async function fetcher<T>(
 			: null;
 
 		const headers: HeadersInit = {
-			...(localToken ? { "X-XSRF-TOKEN": localToken } : {}),
+			...(localToken ? {
+				"X-XSRF-TOKEN": localToken,
+				"X-CSRF-TOKEN": localToken  // Spring Security 호환성을 위해 두 가지 모두 전송
+			} : {}),
 			...(options.headers || {}),
 		};
 
@@ -27,6 +30,7 @@ export async function fetcher<T>(
 
 		console.log("🚀 API 요청 시작:", endpoint);
 		console.log("👉 요청에 사용된 XSRF-TOKEN:", localToken);
+		console.log("📤 요청 헤더:", headers);
 
 		// ✅ 2️⃣ 실제 요청
 		const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -34,6 +38,9 @@ export async function fetcher<T>(
 			credentials: "include", // 쿠키 포함 필수
 			...options,
 		});
+
+		console.log("📥 응답 상태:", response.status);
+		console.log("📥 응답 헤더 (전체):", Array.from(response.headers.entries()));
 
 		// ✅ 3️⃣ 응답 헤더에서 새 CSRF 토큰 확인
 		const newHeaderToken =
@@ -44,14 +51,20 @@ export async function fetcher<T>(
 			response.headers.get("csrf-token") ||
 			response.headers.get("xsrf-token");
 
+		console.log("🔍 추출된 CSRF 토큰:", newHeaderToken);
+
 		if (newHeaderToken && typeof window !== "undefined") {
 			const currentToken = localStorage.getItem("XSRF-TOKEN");
 			if (newHeaderToken !== currentToken) {
 				console.log("🆕 서버에서 새로운 CSRF 토큰 수신:", newHeaderToken);
 				localStorage.setItem("XSRF-TOKEN", newHeaderToken);
+				console.log("✅ localStorage에 CSRF 토큰 저장 완료");
+			} else {
+				console.log("ℹ️ CSRF 토큰 변경 없음 (기존 값과 동일)");
 			}
 		} else if (typeof window !== "undefined") {
 			console.log("⚠️ 응답에 새로운 CSRF 토큰 헤더 없음 — 기존 값 유지");
+			console.log("⚠️ localStorage의 기존 토큰:", localStorage.getItem("XSRF-TOKEN"));
 		}
 
 		// ✅ 4️⃣ 본문 파싱
