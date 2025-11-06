@@ -11,7 +11,8 @@ import MenuSection from './MenuSection';
 import LogoutSection from './LogoutSection';
 import CustomModal from '../../Shared/ui/CustomModal';
 import CustomButton from '../../Shared/ui/CustomButton';
-import InvestmentTypeSelector from '../signup/InvestmentTypeSelector';
+import InvestmentTypeChangeModal from './InvestmentTypeChangeModal';
+import type { InvestmentType } from '../../Shared/api/services/investmentTypeChangeService';
 
 type UserData = {
   name: string;
@@ -48,13 +49,6 @@ export default function MyPageSidebar({ userData }: Props) {
   const [openModal, setOpenModal] = useState<null | 'uid' | 'type' | 'password'>(null);
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
-  const [selectedType, setSelectedType] = useState<'스윙' | '데이' | '스켈핑'>(
-    userData.investmentType === 'SWING'
-      ? '스윙'
-      : userData.investmentType === 'DAY'
-        ? '데이'
-        : '스켈핑'
-  );
 
   // 로그아웃 / 탈퇴
   const handleLogout = async () => {
@@ -91,12 +85,6 @@ export default function MyPageSidebar({ userData }: Props) {
     }
     // TODO: Implement password change API call
     alert('비밀번호 변경 기능은 추후 구현 예정입니다.');
-    setOpenModal(null);
-  };
-
-  const handleTypeChange = () => {
-    // TODO: Implement investment type change API call
-    alert('투자유형 변경 기능은 추후 구현 예정입니다.');
     setOpenModal(null);
   };
 
@@ -161,13 +149,11 @@ export default function MyPageSidebar({ userData }: Props) {
       </CustomModal>
 
       {/* 투자유형 변경 */}
-      <CustomModal variant={1} isOpen={openModal === 'type'} onClose={() => setOpenModal(null)}>
-        <h2 className="text-lg mb-4 font-semibold">투자유형 변경</h2>
-        <InvestmentTypeSelector value={selectedType} onChange={setSelectedType} />
-        <CustomButton variant="prettyFull" onClick={handleTypeChange} className="mt-4">
-          변경하기
-        </CustomButton>
-      </CustomModal>
+      <InvestmentTypeChangeModal
+        isOpen={openModal === 'type'}
+        onClose={() => setOpenModal(null)}
+        currentType={userData.investmentType as InvestmentType}
+      />
     </aside>
   );
 }

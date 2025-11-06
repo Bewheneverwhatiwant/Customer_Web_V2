@@ -1,10 +1,13 @@
 'use client';
 
+import { useState } from 'react';
+import { Phone } from 'lucide-react';
 import { UserStatus } from '../../Shared/store/authStore';
 import { RENDER_RULES } from '../../app/my/constants/userStatusRules';
 import StatusWrapper from './StatusWrapper';
 import PnLCalendar from './PnLCalendar';
 import YearlyMonthList from './YearlyMonthList';
+import ConsultationModal from './ConsultationModal';
 
 // Import widgets
 import UIDPending from '../../app/my/widget/UID_Pending';
@@ -23,6 +26,7 @@ type Props = {
  * 사용자 상태에 따라 다른 위젯을 표시
  */
 export default function MyPageMain({ state }: Props) {
+  const [isConsultationModalOpen, setIsConsultationModalOpen] = useState(false);
   // basic_available은 무료 고객이 쓸 수 있는 기능의 보여짐 여부를 제어하기 위한 변수
   // premium_available은 유료 고객이 쓸 수 있는 기능의 보여짐 여부를 제어하기 위한 변수
   // message는 기능이 보여지지 못할 때 표시할 안내 문구
@@ -75,6 +79,19 @@ export default function MyPageMain({ state }: Props) {
           </div>
         )}
 
+        {/* 상담 예약 버튼 - 캘린더를 보여주는 상태에서만 표시 */}
+        {shouldShowCalendar && (
+          <div className="mt-10">
+            <button
+              onClick={() => setIsConsultationModalOpen(true)}
+              className="w-full max-w-md mx-auto flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all font-semibold"
+            >
+              <Phone size={24} />
+              <span>전화 상담 예약하기</span>
+            </button>
+          </div>
+        )}
+
         {/* UID 승인 이후에만 보임 */}
         <StatusWrapper
           type="basic"
@@ -93,6 +110,12 @@ export default function MyPageMain({ state }: Props) {
           </div>
         </StatusWrapper>
       </div>
+
+      {/* 상담 예약 모달 */}
+      <ConsultationModal
+        isOpen={isConsultationModalOpen}
+        onClose={() => setIsConsultationModalOpen(false)}
+      />
     </main>
   );
 }

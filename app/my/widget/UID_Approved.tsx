@@ -2,15 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { consultationService } from '../../../Shared/api/services';
+import { getMyConsultations } from '../../../Shared/api/services/consultationService';
+import type { ConsultationResponse } from '../../../Shared/api/services/consultationService';
 import CustomButton from '../../../Shared/ui/CustomButton';
-
-interface Consultation {
-  id: number;
-  scheduledAt: string;
-  status: string;
-  consultationType: string;
-}
 
 /**
  * UID 승인 완료 상태 위젯
@@ -18,16 +12,27 @@ interface Consultation {
  */
 export default function UIDApproved() {
   const router = useRouter();
-  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [consultations, setConsultations] = useState<ConsultationResponse[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadConsultations();
+
+    // 상담 예약이 변경되었을 때 자동으로 목록 새로고침
+    const handleConsultationUpdate = () => {
+      loadConsultations();
+    };
+
+    window.addEventListener('consultationUpdated', handleConsultationUpdate);
+
+    return () => {
+      window.removeEventListener('consultationUpdated', handleConsultationUpdate);
+    };
   }, []);
 
   const loadConsultations = async () => {
     setLoading(true);
-    const result = await consultationService.getMyConsultations();
+    const result = await getMyConsultations();
     if (result.success && result.data) {
       setConsultations(result.data.slice(0, 3)); // 최근 3개만 표시
     }
@@ -55,11 +60,10 @@ export default function UIDApproved() {
           <div className="space-y-2">
             {consultations.map((c) => (
               <div key={c.id} className="bg-white p-3 rounded border border-gray-200">
-                <p className="text-sm text-gray-600">
-                  {new Date(c.scheduledAt).toLocaleString('ko-KR')}
+                <p className="text-sm font-medium">
+                  {c.date} {c.time.substring(0, 5)}
                 </p>
-                <p className="text-sm font-medium">{c.consultationType}</p>
-                <p className="text-xs text-gray-500">{c.status}</p>
+                <p className="text-xs text-gray-500">전화 상담 (약 1시간)</p>
               </div>
             ))}
           </div>
@@ -71,7 +75,7 @@ export default function UIDApproved() {
       )}
 
       <div className="flex gap-3">
-        <CustomButton variant="prettyFull" onClick={() => router.push('/reservation')}>
+        <CustomButton variant="prettyFull" onClick={() => router.push('/my')}>
           상담 예약하기
         </CustomButton>
         <CustomButton variant="normalClean" onClick={() => router.push('/payment')}>
