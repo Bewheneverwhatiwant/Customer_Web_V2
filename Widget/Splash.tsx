@@ -22,7 +22,7 @@ export function Splash() {
 
   return (
     <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
-      <div className="w-2/5 animate-bounce-subtle">
+      <div className="w-2/5 animate-bounce-subtle animate-diagonal-shine">
         <Image
           src="/images/final_logo_blue.png"
           alt="TPT Logo"

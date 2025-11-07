@@ -46,10 +46,46 @@ body {
   }
 }
 
+@keyframes diagonal-shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+    opacity: 0;
+  }
+}
+
 .animate-bounce-subtle {
   animation: bounce-subtle 1.5s ease-in-out infinite;
 }
 
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-diagonal-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-diagonal-shine::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.8) 50%,
+    transparent 70%
+  );
+  animation: diagonal-shine 1s ease-in-out;
+  pointer-events: none;
 }

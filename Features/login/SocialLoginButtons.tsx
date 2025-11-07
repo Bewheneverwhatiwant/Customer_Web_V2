@@ -25,19 +25,27 @@ export default function SocialLoginButtons({
           type="button"
           onClick={onKakao}
           disabled={disabled}
-          className="flex-1 bg-[#FEE500] hover:bg-[#F5DC00] transition-colors rounded-md py-3 px-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 relative overflow-hidden rounded-md h-12 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
         >
-          <Image src="/images/kakao_icon.png" alt="Kakao" width={20} height={20} />
-          <span className="font-medium text-[#191919]">카카오 로그인</span>
+          <Image
+            src="/images/kakao_login_img_small.png"
+            alt="카카오 로그인"
+            fill
+            className="object-cover"
+          />
         </button>
         <button
           type="button"
           onClick={onNaver}
           disabled={disabled}
-          className="flex-1 bg-[#03C75A] hover:bg-[#02B350] transition-colors rounded-md py-3 px-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 relative overflow-hidden rounded-md h-12 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
         >
-          <Image src="/images/naver_icon.png" alt="Naver" width={20} height={20} />
-          <span className="font-medium text-white">네이버 로그인</span>
+          <Image
+            src="/images/naver_login_img.png"
+            alt="네이버 로그인"
+            fill
+            className="object-cover"
+          />
         </button>
       </div>
     </div>
