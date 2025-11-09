@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import CustomInputField from '../../Shared/ui/CustomInputField';
-import CustomButton from '../../Shared/ui/CustomButton';
-import CustomCheckBox from '../../Shared/ui/CustomCheckBox';
+import CustomInputField from '@/Shared/ui/CustomInputField';
+import CustomButton from '@/Shared/ui/CustomButton';
+import CustomCheckBox from '@/Shared/ui/CustomCheckBox';
 
 interface LoginFormProps {
   userId: string;

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import CustomInputField from '../../Shared/ui/CustomInputField';
-import CustomButton from '../../Shared/ui/CustomButton';
-import CustomCheckBox from '../../Shared/ui/CustomCheckBox';
-import CustomLink from '../../Shared/ui/CustomLink';
+import CustomInputField from '@/Shared/ui/CustomInputField';
+import CustomButton from '@/Shared/ui/CustomButton';
+import CustomCheckBox from '@/Shared/ui/CustomCheckBox';
+import CustomLink from '@/Shared/ui/CustomLink';
 import InvestmentTypeSelector from './InvestmentTypeSelector';
 import UIDGuide from './UIDGuide';
 
