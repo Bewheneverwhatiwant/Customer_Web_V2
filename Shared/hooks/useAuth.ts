@@ -11,6 +11,37 @@ import type {
 } from '../api/apiTypes';
 
 /**
+ * 서버에서 반환되는 사용자 정보 타입
+ */
+interface ServerUserData {
+  name: string;
+  username: string;
+  email: string;
+  phoneNumber?: string | null;
+  myProfileImage?: string | null; // 서버에서는 myProfileImage로 반환
+  investmentType: 'SWING' | 'DAY' | 'SCALPING' | 'FREE' | '';
+  isPremium: boolean;
+  isCourseCompleted: boolean;
+  exchangeName?: string | null;
+  paymentMethod?: string | null;
+  trainerId?: number | null;
+  trainerName?: string | null;
+  uid?: string | null;
+  userStatus?: 'UID_REVIEW_PENDING' | 'UID_REJECTED' | 'UID_APPROVED' | 'PAID_BEFORE_TEST' | 'PAID_AFTER_TEST_TRAINER_ASSIGNING' | 'TRAINER_ASSIGNED';
+}
+
+/**
+ * 서버 응답을 클라이언트 User 타입으로 변환
+ */
+const transformServerUserData = (serverData: ServerUserData): User => {
+  const { myProfileImage, ...rest } = serverData;
+  return {
+    ...rest,
+    profileImage: myProfileImage, // myProfileImage -> profileImage 변환
+  };
+};
+
+/**
  * 인증 관련 커스텀 훅
  *
  * Customer_Web의 useAuth를 customer_web_ver2에 맞게 마이그레이션
@@ -33,8 +64,10 @@ export const useAuth = () => {
           // CSRF 토큰은 응답 헤더에서 자동으로 추출되어 localStorage에 저장됨
           const myInfoResult = await authService.getMyInfo();
           if (myInfoResult.success && myInfoResult.data) {
-            console.log('[useAuth] 사용자 정보 조회 성공:', myInfoResult.data);
-            storeLogin(myInfoResult.data as User);
+            console.log('[useAuth] 사용자 정보 조회 성공 (원본):', myInfoResult.data);
+            const transformedUser = transformServerUserData(myInfoResult.data as ServerUserData);
+            console.log('[useAuth] 변환된 사용자 정보:', transformedUser);
+            storeLogin(transformedUser);
           } else {
             console.error('[useAuth] 사용자 정보 조회 실패:', myInfoResult);
           }
@@ -111,7 +144,10 @@ export const useAuth = () => {
     try {
       const result = await authService.getMyInfo();
       if (result.success && result.data) {
-        storeLogin(result.data as User);
+        console.log('[useAuth] getMyInfo 성공 (원본):', result.data);
+        const transformedUser = transformServerUserData(result.data as ServerUserData);
+        console.log('[useAuth] getMyInfo 변환된 사용자 정보:', transformedUser);
+        storeLogin(transformedUser);
       }
       return result;
     } catch (error) {
@@ -162,13 +198,16 @@ export const useAuth = () => {
    * 프로필 이미지 변경
    */
   const updateProfileImage = useCallback(
-    async (file: File): Promise<ApiResponse<string>> => {
+    async (file: File): Promise<ApiResponse<any>> => {
       setIsLoading(true);
       try {
         const result = await authService.updateProfileImage(file);
+        console.log('[useAuth] updateProfileImage 결과:', result);
         if (result.success && result.data) {
           // 프로필 이미지 URL 업데이트
-          updateUser({ profileImage: result.data });
+          const newImageUrl = result.data.myProfileImage;
+          console.log('[useAuth] 프로필 이미지 URL 업데이트:', newImageUrl);
+          updateUser({ profileImage: newImageUrl });
         }
         return result;
       } catch (error) {

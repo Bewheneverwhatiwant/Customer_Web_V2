@@ -108,7 +108,7 @@ export default function ColumnDetailPage() {
       {/* 좌측: 트레이너 프로필 */}
       <div className="w-full md:w-1/4 flex flex-col items-center">
         <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-4">
-          {column.profileImageUrl ? (
+          {column.profileImageUrl && column.profileImageUrl.trim() !== '' ? (
             <img
               src={column.profileImageUrl}
               alt={column.writerName}

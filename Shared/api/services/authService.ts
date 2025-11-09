@@ -175,15 +175,25 @@ export const changePassword = async (
 };
 
 /**
+ * 프로필 이미지 변경 응답 타입
+ */
+interface UpdateProfileImageResponse {
+  myProfileImage: string;
+}
+
+/**
  * 프로필 이미지 변경
  */
-export const updateProfileImage = async (file: File): Promise<ApiResponse<string>> => {
+export const updateProfileImage = async (file: File): Promise<ApiResponse<UpdateProfileImageResponse>> => {
   const formData = new FormData();
   formData.append('file', file);
 
-  return fetcher<string>(API_ENDPOINTS.USER.PROFILE_IMAGE, {
+  console.log('[authService] 프로필 이미지 업로드 요청');
+  const result = await fetcher<UpdateProfileImageResponse>(API_ENDPOINTS.USER.PROFILE_IMAGE, {
     method: 'POST',
     body: formData,
     // FormData는 자동으로 Content-Type 설정되므로 headers 생략
   });
+  console.log('[authService] 프로필 이미지 업로드 응답:', result);
+  return result;
 };

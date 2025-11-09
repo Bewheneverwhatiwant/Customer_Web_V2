@@ -33,7 +33,7 @@ export default function ProfileSection({
       {/* 프로필 이미지 업로더 */}
       <div className="relative">
         <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#B9AB70] bg-gray-200 flex items-center justify-center">
-          {profileImage ? (
+          {profileImage && profileImage.trim() !== '' ? (
             <Image
               src={profileImage}
               alt={name}

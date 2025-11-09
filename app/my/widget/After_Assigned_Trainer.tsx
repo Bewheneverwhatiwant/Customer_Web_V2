@@ -14,7 +14,9 @@ export default function AfterAssignedTrainer() {
   const { user } = useAuthStore();
 
   const trainerName = user?.trainerName || '담당 트레이너';
-  const trainerImage = user?.profileImage || '/images/default_trainer.png';
+  const trainerImage = (user?.profileImage && user.profileImage.trim() !== '')
+    ? user.profileImage
+    : '/images/default_trainer.png';
 
   return (
     <div className="flex flex-col gap-4">

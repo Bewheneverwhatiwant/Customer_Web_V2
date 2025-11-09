@@ -24,8 +24,7 @@ import { useNicepayPayment } from '../../Shared/hooks/useNicePayments';
  */
 export default function MyPage() {
   const router = useRouter();
-  const { user, isAuthenticated, checkAuth } = useAuthStore();
-  const [loading, setLoading] = useState(true);
+  const { user, isAuthenticated } = useAuthStore();
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
   const { openPayment } = useNicepayPayment();
 
@@ -34,39 +33,17 @@ export default function MyPage() {
   const useMockData = DEFAULT_MOCK_CONFIG.enabled && mockData !== null;
 
   useEffect(() => {
-    // Mock Data 사용 시 인증 체크 스킵
-    if (useMockData) {
-      setLoading(false);
-      return;
-    }
-
-    const initAuth = async () => {
-      if (!isAuthenticated) {
-        await checkAuth();
-      }
-      setLoading(false);
-    };
-    initAuth();
-  }, [isAuthenticated, checkAuth, useMockData]);
-
-  useEffect(() => {
     // Mock Data 사용 시 리다이렉트 스킵
     if (useMockData) {
       return;
     }
 
-    if (!loading && !isAuthenticated) {
+    // 비로그인 상태면 로그인 페이지로 리다이렉트
+    if (!isAuthenticated) {
+      console.log('[MyPage] 비로그인 상태, 로그인 페이지로 이동');
       router.push('/login');
     }
-  }, [loading, isAuthenticated, router, useMockData]);
-
-  if (loading) {
-    return (
-      <div className="w-full min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-lg text-gray-600">로딩 중...</div>
-      </div>
-    );
-  }
+  }, [isAuthenticated, router, useMockData]);
 
   // Mock Data 사용 또는 실제 사용자 데이터 사용
   let userData;
