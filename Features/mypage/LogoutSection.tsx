@@ -12,7 +12,7 @@ interface LogoutSectionProps {
  */
 export default function LogoutSection({ onLogout, onWithdraw }: LogoutSectionProps) {
   return (
-    <div className="mt-auto flex flex-col gap-2 px-4 pt-6 border-t border-gray-700">
+    <div className="mt-auto flex flex-col gap-2 px-4 pt-6 border-t border-gray-200">
       <CustomButton variant="normalClean" onClick={onLogout}>
         로그아웃
       </CustomButton>

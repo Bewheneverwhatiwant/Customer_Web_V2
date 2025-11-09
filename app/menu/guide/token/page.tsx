@@ -1,6 +1,5 @@
 'use client';
 
-import { Header } from '../../../../Widget/Header';
 import { Footer } from '../../../../Widget/Footer';
 import { Coins, Gift, TrendingUp, Info } from 'lucide-react';
 
@@ -10,10 +9,8 @@ import { Coins, Gift, TrendingUp, Info } from 'lucide-react';
  */
 export default function TokenGuidePage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-
-      <main className="pt-20 pb-16 px-4">
+    <div className="min-h-screen bg-white">
+      <main className="pb-16 px-4">
         <div className="max-w-4xl mx-auto">
           {/* 헤더 */}
           <section className="text-center mb-12 mt-12">

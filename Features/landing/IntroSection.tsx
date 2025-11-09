@@ -1,8 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { ArrowRight } from "lucide-react";
+import CustomButton from "@/Shared/ui/CustomButton";
 
 export function IntroSection() {
+  const router = useRouter();
+
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-white px-4 py-12 md:py-20">
       {/* 상단 인트로 블록 */}
@@ -49,6 +54,20 @@ export function IntroSection() {
             />
           </div>
         ))}
+      </div>
+
+      {/* 홈으로 버튼 */}
+      <div className="flex items-center justify-center py-5 w-full px-4">
+        <CustomButton
+          variant="prettyFull"
+          className="w-[90%] mb-20 px-5"
+          onClick={() => router.push("/home")}
+        >
+          <div className="flex items-center justify-between w-full">
+            <span>홈으로</span>
+            <ArrowRight size={20} />
+          </div>
+        </CustomButton>
       </div>
 
       {/* 문제 인식 블록 */}

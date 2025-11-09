@@ -79,7 +79,7 @@ export default function MyPageSidebar({ userData }: Props) {
 
 
   return (
-    <aside className="w-full md:w-64 bg-[#0f172a] text-white flex flex-col md:flex-col py-6 md:py-10 relative md:sticky md:top-0">
+    <aside className="w-full md:w-64 bg-white text-black flex flex-col md:flex-col py-6 md:py-10 relative md:sticky md:top-0 border-r border-gray-200">
       <div className="flex flex-col md:items-center gap-6 md:gap-3 md:mb-8 p-3">
         <ProfileSection
           name={userData.name}

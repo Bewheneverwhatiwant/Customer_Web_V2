@@ -104,7 +104,7 @@ export default function ColumnDetailPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 pb-20 pt-20 flex flex-col md:flex-row gap-10 mt-20">
+    <div className="max-w-6xl mx-auto px-6 pb-20 flex flex-col md:flex-row gap-10 mt-20">
       {/* 좌측: 트레이너 프로필 */}
       <div className="w-full md:w-1/4 flex flex-col items-center">
         <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-4">

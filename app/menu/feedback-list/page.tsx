@@ -95,14 +95,14 @@ export default function AllFeedback() {
 
   if (error) {
     return (
-      <div className="max-w-6xl mx-auto p-6 pt-20">
+      <div className="max-w-6xl mx-auto p-6">
         <div className="text-center text-red-500">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 pt-20">
+    <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-xl sm:text-xl md:text-2xl lg:text-3xl mb-20 text-center">
         TPT의 실시간 트레이딩 피드백을 둘러보세요.
       </h1>

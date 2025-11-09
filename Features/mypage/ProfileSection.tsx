@@ -67,8 +67,8 @@ export default function ProfileSection({
         />
       </div>
 
-      <span className="font-semibold text-base md:text-lg">{name} 님</span>
-      {uploading && <p className="text-xs text-gray-400">이미지 업로드 중...</p>}
+      <span className="font-semibold text-base md:text-lg text-black">{name} 님</span>
+      {uploading && <p className="text-xs text-gray-500">이미지 업로드 중...</p>}
 
       {/* 토큰 개수 표시 */}
       {remainingToken !== undefined && (

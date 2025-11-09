@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Header } from '../../../Widget/Header';
 import { Footer } from '../../../Widget/Footer';
 import ConsultationModal from '../../../Features/mypage/ConsultationModal';
 import { Crown, CheckCircle, Zap, TrendingUp, Users, Star } from 'lucide-react';
@@ -14,10 +13,8 @@ export default function ETCCPage() {
   const [isConsultationModalOpen, setIsConsultationModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-
-      <main className="pt-20 pb-16 px-4">
+    <div className="min-h-screen bg-white">
+      <main className="pb-16 px-4">
         <div className="max-w-6xl mx-auto">
           {/* 헤더 */}
           <section className="text-center mb-16 mt-12">

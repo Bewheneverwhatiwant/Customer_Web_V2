@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Header } from '../../../../Widget/Header';
 import { Footer } from '../../../../Widget/Footer';
 import { Star, ThumbsUp, User } from 'lucide-react';
 import Image from 'next/image';
@@ -36,10 +35,8 @@ export default function ReviewPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-
-      <main className="pt-20 pb-16 px-4">
+    <div className="min-h-screen bg-white">
+      <main className="pb-16 px-4">
         <div className="max-w-6xl mx-auto">
           {/* 헤더 */}
           <section className="text-center mb-12 mt-12">
